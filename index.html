@@ -392,11 +392,19 @@
             transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .week-bar.partial {
+        .week-bar.yellow {
+            background: #eab308;
+        }
+
+        .week-bar.amber {
             background: #f59e0b;
         }
 
-        .week-bar.empty {
+        .week-bar.dark-amber {
+            background: #ea580c;
+        }
+
+        .week-bar.red {
             background: #ef4444;
         }
 
@@ -440,12 +448,22 @@
             color: white;
         }
 
-        .calendar-day.partial {
+        .calendar-day.yellow {
+            background: #eab308;
+            color: white;
+        }
+
+        .calendar-day.amber {
             background: #f59e0b;
             color: white;
         }
 
-        .calendar-day.empty {
+        .calendar-day.dark-amber {
+            background: #ea580c;
+            color: white;
+        }
+
+        .calendar-day.red {
             background: #ef4444;
             color: white;
         }
@@ -486,11 +504,19 @@
             background: var(--color-accent);
         }
 
-        .legend-color.partial {
+        .legend-color.yellow {
+            background: #eab308;
+        }
+
+        .legend-color.amber {
             background: #f59e0b;
         }
 
-        .legend-color.empty {
+        .legend-color.dark-amber {
+            background: #ea580c;
+        }
+
+        .legend-color.red {
             background: #ef4444;
         }
 
@@ -688,12 +714,20 @@
                             <span>100%</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color partial"></div>
-                            <span>1-99%</span>
+                            <div class="legend-color yellow"></div>
+                            <span>75-99%</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color empty"></div>
-                            <span>0%</span>
+                            <div class="legend-color amber"></div>
+                            <span>50-74%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color dark-amber"></div>
+                            <span>25-49%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color red"></div>
+                            <span>0-24%</span>
                         </div>
                     </div>
                 </div>
@@ -1074,10 +1108,17 @@
             
             weekChart.innerHTML = weekData.map(day => {
                 let barClass = 'week-bar';
-                if (day.percentage === 0) {
-                    barClass += ' empty';
-                } else if (day.percentage < 100) {
-                    barClass += ' partial';
+                
+                if (day.percentage === 100) {
+                    // Green - perfect
+                } else if (day.percentage >= 75) {
+                    barClass += ' yellow';
+                } else if (day.percentage >= 50) {
+                    barClass += ' amber';
+                } else if (day.percentage >= 25) {
+                    barClass += ' dark-amber';
+                } else {
+                    barClass += ' red';
                 }
                 
                 return `
@@ -1142,10 +1183,14 @@
                     classes += ' future';
                 } else if (day.percentage === 100) {
                     classes += ' complete';
-                } else if (day.percentage > 0) {
-                    classes += ' partial';
-                } else if (day.percentage === 0) {
-                    classes += ' empty';
+                } else if (day.percentage >= 75) {
+                    classes += ' yellow';
+                } else if (day.percentage >= 50) {
+                    classes += ' amber';
+                } else if (day.percentage >= 25) {
+                    classes += ' dark-amber';
+                } else {
+                    classes += ' red';
                 }
                 
                 if (day.isToday) {
