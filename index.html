@@ -479,45 +479,69 @@
             box-shadow: 0 0 0 2px var(--color-text-primary);
         }
 
-        .calendar-legend {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin-top: 20px;
-            font-size: 12px;
-            color: var(--color-text-secondary);
+        .year-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 12px;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        .legend-item {
+        .year-month {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .year-month:hover {
+            transform: scale(1.05);
+        }
+
+        .year-month-name {
+            font-size: 11px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .year-month-box {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+            transition: var(--transition);
         }
 
-        .legend-color {
-            width: 16px;
-            height: 16px;
-            border-radius: 4px;
-        }
-
-        .legend-color.complete {
+        .year-month-box.complete {
             background: var(--color-accent);
         }
 
-        .legend-color.yellow {
+        .year-month-box.yellow {
             background: #eab308;
         }
 
-        .legend-color.amber {
+        .year-month-box.amber {
             background: #f59e0b;
         }
 
-        .legend-color.dark-amber {
+        .year-month-box.dark-amber {
             background: #ea580c;
         }
 
-        .legend-color.red {
+        .year-month-box.red {
             background: #ef4444;
+        }
+
+        .year-month-box.empty {
+            background: var(--color-hover);
+            color: var(--color-text-secondary);
         }
 
         .empty-state {
@@ -708,28 +732,11 @@
                 <div class="visual-section">
                     <h3 class="visual-title">This Month</h3>
                     <div class="month-calendar" id="monthCalendar"></div>
-                    <div class="calendar-legend">
-                        <div class="legend-item">
-                            <div class="legend-color complete"></div>
-                            <span>100%</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color yellow"></div>
-                            <span>75-99%</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color amber"></div>
-                            <span>50-74%</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color dark-amber"></div>
-                            <span>25-49%</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color red"></div>
-                            <span>0-24%</span>
-                        </div>
-                    </div>
+                </div>
+
+                <div class="visual-section">
+                    <h3 class="visual-title">Your Year</h3>
+                    <div class="year-overview" id="yearOverview"></div>
                 </div>
             </div>
 
@@ -1076,22 +1083,28 @@
 
             document.getElementById('stats').innerHTML = statsHtml;
             
-            renderWeekChart(habits, completions);
-            renderMonthCalendar(habits, completions);
+            renderWeekChart(habits, completions, currentDate);
+            renderMonthCalendar(habits, completions, currentDate);
+            renderYearOverview(habits, completions, currentDate);
         }
 
-        function renderWeekChart(habits, completions) {
+        function renderWeekChart(habits, completions, viewingDate) {
             const weekChart = document.getElementById('weekChart');
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
             
             const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             const weekData = [];
             
-            // Get last 7 days
-            for (let i = 6; i >= 0; i--) {
-                const date = new Date(today);
-                date.setDate(date.getDate() - i);
+            // Get the viewing date's day of week
+            const viewingDay = viewingDate.getDay();
+            
+            // Calculate start of week (Sunday)
+            const startOfWeek = new Date(viewingDate);
+            startOfWeek.setDate(startOfWeek.getDate() - viewingDay);
+            
+            // Get 7 days starting from Sunday of the viewing week
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(startOfWeek);
+                date.setDate(date.getDate() + i);
                 const dateKey = formatDate(date);
                 const dayCompletions = completions[dateKey] || {};
                 
@@ -1099,17 +1112,25 @@
                 const completed = totalHabits > 0 ? habits.filter(h => dayCompletions[h.id]).length : 0;
                 const percentage = totalHabits > 0 ? Math.round((completed / totalHabits) * 100) : 0;
                 
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
                 weekData.push({
                     day: days[date.getDay()],
                     percentage: percentage,
-                    isToday: date.getTime() === today.getTime()
+                    isToday: date.getTime() === today.getTime(),
+                    isFuture: date > today
                 });
             }
             
             weekChart.innerHTML = weekData.map(day => {
                 let barClass = 'week-bar';
                 
-                if (day.percentage === 100) {
+                if (day.isFuture) {
+                    // Future days - show empty
+                    barClass += ' red';
+                    day.percentage = 0;
+                } else if (day.percentage === 100) {
                     // Green - perfect
                 } else if (day.percentage >= 75) {
                     barClass += ' yellow';
@@ -1132,13 +1153,13 @@
             }).join('');
         }
 
-        function renderMonthCalendar(habits, completions) {
+        function renderMonthCalendar(habits, completions, viewingDate) {
             const calendar = document.getElementById('monthCalendar');
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             
-            const currentMonth = today.getMonth();
-            const currentYear = today.getFullYear();
+            const currentMonth = viewingDate.getMonth();
+            const currentYear = viewingDate.getFullYear();
             
             // Get first day of month
             const firstDay = new Date(currentYear, currentMonth, 1);
@@ -1198,6 +1219,80 @@
                 }
                 
                 return `<div class="${classes}">${day.day}</div>`;
+            }).join('');
+        }
+
+        function renderYearOverview(habits, completions, viewingDate) {
+            const yearOverview = document.getElementById('yearOverview');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const currentYear = viewingDate.getFullYear();
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            
+            const yearData = [];
+            
+            for (let month = 0; month < 12; month++) {
+                const firstDay = new Date(currentYear, month, 1);
+                const lastDay = new Date(currentYear, month + 1, 0);
+                
+                let totalDays = 0;
+                let totalPercentage = 0;
+                
+                // Calculate average percentage for the month
+                for (let day = 1; day <= lastDay.getDate(); day++) {
+                    const date = new Date(currentYear, month, day);
+                    
+                    // Skip future days
+                    if (date > today) continue;
+                    
+                    const dateKey = formatDate(date);
+                    const dayCompletions = completions[dateKey] || {};
+                    
+                    const totalHabits = habits.length;
+                    const completed = totalHabits > 0 ? habits.filter(h => dayCompletions[h.id]).length : 0;
+                    const percentage = totalHabits > 0 ? Math.round((completed / totalHabits) * 100) : 0;
+                    
+                    totalDays++;
+                    totalPercentage += percentage;
+                }
+                
+                const avgPercentage = totalDays > 0 ? Math.round(totalPercentage / totalDays) : 0;
+                const isFuture = firstDay > today;
+                
+                yearData.push({
+                    month: monthNames[month],
+                    percentage: avgPercentage,
+                    isFuture: isFuture,
+                    hasData: totalDays > 0
+                });
+            }
+            
+            yearOverview.innerHTML = yearData.map(month => {
+                let boxClass = 'year-month-box';
+                
+                if (month.isFuture || !month.hasData) {
+                    boxClass += ' empty';
+                } else if (month.percentage === 100) {
+                    boxClass += ' complete';
+                } else if (month.percentage >= 75) {
+                    boxClass += ' yellow';
+                } else if (month.percentage >= 50) {
+                    boxClass += ' amber';
+                } else if (month.percentage >= 25) {
+                    boxClass += ' dark-amber';
+                } else {
+                    boxClass += ' red';
+                }
+                
+                const displayText = month.isFuture || !month.hasData ? '—' : `${month.percentage}%`;
+                
+                return `
+                    <div class="year-month">
+                        <div class="year-month-name">${month.month}</div>
+                        <div class="${boxClass}">${displayText}</div>
+                    </div>
+                `;
             }).join('');
         }
 
