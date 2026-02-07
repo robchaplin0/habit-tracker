@@ -3,8 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health & Wellness Habit Tracker</title>
+    <title>Habit Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --color-bg: #fafaf9;
+            --color-surface: #ffffff;
+            --color-text-primary: #1a1a1a;
+            --color-text-secondary: #737373;
+            --color-accent: #059669;
+            --color-accent-light: #d1fae5;
+            --color-border: #e5e5e5;
+            --color-hover: #f5f5f4;
+            --font-display: 'Crimson Pro', serif;
+            --font-body: 'DM Sans', sans-serif;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,289 +29,430 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: var(--font-body);
+            background: var(--color-bg);
+            color: var(--color-text-primary);
+            line-height: 1.6;
             min-height: 100vh;
-            padding: 20px;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 680px;
             margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
+            background: var(--color-surface);
+            min-height: 100vh;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
+            padding: 60px 40px 40px;
+            border-bottom: 1px solid var(--color-border);
+            animation: fadeIn 0.6s ease-out;
         }
 
         .header h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
+            font-family: var(--font-display);
+            font-size: 42px;
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+            color: var(--color-text-primary);
         }
 
-        .header p {
-            opacity: 0.9;
-            font-size: 16px;
+        .header-subtitle {
+            font-size: 15px;
+            color: var(--color-text-secondary);
+            font-weight: 400;
+            letter-spacing: 0.01em;
         }
 
         .client-name {
-            background: rgba(255,255,255,0.2);
-            padding: 10px 20px;
-            border-radius: 20px;
-            margin-top: 15px;
+            margin-top: 24px;
+            padding: 8px 16px;
+            background: var(--color-accent-light);
+            color: var(--color-accent);
+            border-radius: 6px;
             display: inline-block;
-            font-size: 18px;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.01em;
         }
 
         .content {
-            padding: 30px;
+            padding: 40px;
         }
 
         .date-nav {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 12px;
+            justify-content: space-between;
+            margin-bottom: 48px;
+            gap: 16px;
+            animation: fadeIn 0.6s ease-out 0.1s backwards;
         }
 
         .date-nav button {
-            background: #667eea;
-            color: white;
-            border: none;
+            background: none;
+            border: 1px solid var(--color-border);
+            color: var(--color-text-primary);
             padding: 10px 20px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
-            transition: background 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: var(--font-body);
+            transition: var(--transition);
+            white-space: nowrap;
         }
 
-        .date-nav button:hover {
-            background: #5568d3;
+        .date-nav button:hover:not(:disabled) {
+            background: var(--color-hover);
+            border-color: var(--color-text-secondary);
         }
 
         .date-nav button:disabled {
-            background: #ccc;
+            opacity: 0.3;
             cursor: not-allowed;
         }
 
         .current-date {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            min-width: 200px;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--color-text-primary);
             text-align: center;
+            flex: 1;
+            letter-spacing: 0.01em;
+        }
+
+        .habits-section {
+            animation: fadeIn 0.6s ease-out 0.2s backwards;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 24px;
+            color: var(--color-text-primary);
+            letter-spacing: -0.01em;
         }
 
         .habits-list {
-            margin-bottom: 30px;
+            margin-bottom: 48px;
         }
 
         .habit-item {
             display: flex;
             align-items: center;
-            padding: 18px;
-            margin-bottom: 12px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            transition: all 0.3s;
-            border: 2px solid transparent;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--color-border);
+            transition: var(--transition);
+            cursor: pointer;
+            user-select: none;
         }
 
         .habit-item:hover {
-            background: #e9ecef;
+            padding-left: 8px;
+            margin-left: -8px;
         }
 
-        .habit-item.completed {
-            background: #d4edda;
-            border-color: #28a745;
+        .habit-checkbox-wrapper {
+            position: relative;
+            width: 24px;
+            height: 24px;
+            margin-right: 20px;
+            flex-shrink: 0;
         }
 
         .habit-checkbox {
-            width: 28px;
-            height: 28px;
-            margin-right: 15px;
+            position: absolute;
+            opacity: 0;
             cursor: pointer;
-            accent-color: #28a745;
+        }
+
+        .habit-checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--color-border);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .habit-checkbox:checked ~ .habit-checkmark {
+            border-color: var(--color-accent);
+            background: var(--color-accent);
+        }
+
+        .habit-checkmark::after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 7px;
+            top: 3px;
+            width: 6px;
+            height: 11px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .habit-checkbox:checked ~ .habit-checkmark::after {
+            display: block;
         }
 
         .habit-name {
             flex: 1;
-            font-size: 18px;
-            color: #333;
+            font-size: 16px;
+            color: var(--color-text-primary);
+            transition: var(--transition);
         }
 
-        .habit-item.completed .habit-name {
-            color: #155724;
-            font-weight: 500;
+        .habit-item:hover .habit-name {
+            color: var(--color-accent);
+        }
+
+        .habit-checkbox:checked ~ .habit-name {
+            opacity: 0.5;
         }
 
         .delete-habit {
-            background: #dc3545;
-            color: white;
+            background: none;
+            color: var(--color-text-secondary);
             border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 8px 12px;
             cursor: pointer;
-            font-size: 14px;
-            transition: background 0.3s;
+            font-size: 13px;
+            font-family: var(--font-body);
+            transition: var(--transition);
+            opacity: 0;
+            border-radius: 6px;
+        }
+
+        .habit-item:hover .delete-habit {
+            opacity: 1;
         }
 
         .delete-habit:hover {
-            background: #c82333;
+            background: #fef2f2;
+            color: #dc2626;
         }
 
         .add-habit-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: #e7f3ff;
-            border-radius: 12px;
-        }
-
-        .add-habit-section h3 {
-            margin-bottom: 15px;
-            color: #333;
+            padding: 32px 0;
+            border-top: 1px solid var(--color-border);
+            margin-top: 24px;
+            animation: fadeIn 0.6s ease-out 0.3s backwards;
         }
 
         .add-habit-form {
             display: flex;
-            gap: 10px;
+            gap: 12px;
         }
 
         .add-habit-input {
             flex: 1;
-            padding: 12px;
-            border: 2px solid #667eea;
+            padding: 14px 16px;
+            border: 1px solid var(--color-border);
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
+            font-family: var(--font-body);
+            transition: var(--transition);
+            background: var(--color-surface);
+        }
+
+        .add-habit-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            background: var(--color-surface);
+        }
+
+        .add-habit-input::placeholder {
+            color: var(--color-text-secondary);
         }
 
         .add-habit-button {
-            background: #667eea;
-            color: white;
+            background: var(--color-text-primary);
+            color: var(--color-surface);
             border: none;
-            padding: 12px 24px;
+            padding: 14px 28px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: background 0.3s;
+            font-size: 15px;
+            font-weight: 500;
+            font-family: var(--font-body);
+            transition: var(--transition);
+            white-space: nowrap;
         }
 
         .add-habit-button:hover {
-            background: #5568d3;
+            background: var(--color-accent);
+            transform: translateY(-1px);
+        }
+
+        .add-habit-button:active {
+            transform: translateY(0);
         }
 
         .stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 30px;
-            padding: 20px;
-            background: #fff3cd;
-            border-radius: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 24px;
+            margin-top: 48px;
+            padding: 32px 0;
+            border-top: 1px solid var(--color-border);
+            animation: fadeIn 0.6s ease-out 0.4s backwards;
         }
 
         .stat-box {
             text-align: center;
-            padding: 15px;
         }
 
         .stat-number {
-            font-size: 32px;
-            font-weight: bold;
-            color: #667eea;
+            font-family: var(--font-display);
+            font-size: 36px;
+            font-weight: 400;
+            color: var(--color-text-primary);
+            margin-bottom: 4px;
+            letter-spacing: -0.02em;
         }
 
         .stat-label {
-            font-size: 14px;
-            color: #666;
-            margin-top: 5px;
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
         }
 
         .empty-state {
             text-align: center;
-            padding: 40px;
-            color: #666;
+            padding: 80px 40px;
+            color: var(--color-text-secondary);
         }
 
-        .empty-state h3 {
-            margin-bottom: 10px;
+        .empty-state-title {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 400;
+            margin-bottom: 12px;
+            color: var(--color-text-primary);
+        }
+
+        .empty-state p {
+            font-size: 15px;
+            line-height: 1.7;
         }
 
         .sync-status {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 32px;
+            right: 32px;
             padding: 12px 20px;
-            background: #28a745;
-            color: white;
-            border-radius: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            background: var(--color-text-primary);
+            color: var(--color-surface);
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             opacity: 0;
-            transition: opacity 0.3s;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-size: 14px;
+            font-weight: 500;
+            z-index: 1000;
         }
 
         .sync-status.show {
             opacity: 1;
+            transform: translateY(0);
         }
 
         .sync-status.error {
-            background: #dc3545;
+            background: #dc2626;
         }
 
         .setup-required {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
             border-radius: 12px;
-            padding: 20px;
-            margin: 20px 0;
+            padding: 32px;
+            margin: 32px 0;
         }
 
         .setup-required h3 {
-            color: #856404;
-            margin-bottom: 10px;
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 400;
+            color: #92400e;
+            margin-bottom: 12px;
         }
 
         .setup-required p {
-            color: #856404;
-            line-height: 1.6;
+            color: #78350f;
+            line-height: 1.7;
+            margin-bottom: 12px;
         }
 
         .setup-required code {
-            background: #fff;
-            padding: 2px 6px;
+            background: #fef3c7;
+            padding: 3px 8px;
             border-radius: 4px;
-            font-family: monospace;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 14px;
         }
 
-        @media (max-width: 600px) {
-            .container {
-                border-radius: 0;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                padding: 40px 24px 24px;
+            }
+
+            .header h1 {
+                font-size: 32px;
             }
 
             .content {
-                padding: 20px;
+                padding: 24px;
             }
 
             .add-habit-form {
                 flex-direction: column;
             }
 
+            .add-habit-button {
+                width: 100%;
+            }
+
             .date-nav {
                 flex-direction: column;
-                gap: 10px;
+                gap: 12px;
+            }
+
+            .current-date {
+                order: -1;
+            }
+
+            .sync-status {
+                bottom: 16px;
+                right: 16px;
+                left: 16px;
+                text-align: center;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -302,8 +460,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🌟 Health & Wellness Tracker</h1>
-            <p>Build better habits, one day at a time</p>
+            <h1>Daily Habits</h1>
+            <p class="header-subtitle">Track your wellness journey</p>
             <div class="client-name" id="clientNameDisplay"></div>
         </div>
 
@@ -311,23 +469,25 @@
             <div id="setupMessage"></div>
 
             <div class="date-nav">
-                <button onclick="changeDate(-1)">← Previous Day</button>
+                <button onclick="changeDate(-1)">← Prev</button>
                 <div class="current-date" id="currentDate"></div>
-                <button onclick="changeDate(1)" id="nextDayBtn">Next Day →</button>
+                <button onclick="changeDate(1)" id="nextDayBtn">Next →</button>
             </div>
 
-            <div class="habits-list" id="habitsList"></div>
+            <div class="habits-section">
+                <h2 class="section-title">Today's Habits</h2>
+                <div class="habits-list" id="habitsList"></div>
+            </div>
 
             <div class="stats" id="stats"></div>
 
             <div class="add-habit-section">
-                <h3>Add New Habit</h3>
                 <div class="add-habit-form">
                     <input 
                         type="text" 
                         id="newHabitInput" 
                         class="add-habit-input" 
-                        placeholder="e.g., Drink 8 glasses of water"
+                        placeholder="Add a new habit..."
                         maxlength="100"
                     >
                     <button class="add-habit-button" onclick="addHabit()">Add Habit</button>
@@ -340,8 +500,7 @@
 
     <script>
         // ===== CONFIGURATION =====
-        // Replace this URL with your Google Apps Script Web App URL after deployment
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbypAwijEMpSHw8FO2A66oes0k8C6gietHCAJeMJ0cjlC3xPPx3viNhLd5KXulxjQJqU/exec';
+        const SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
         
         // ===== APP STATE =====
         let currentDate = new Date();
@@ -351,7 +510,6 @@
 
         // Initialize app
         function init() {
-            // Get client ID from URL parameter
             const urlParams = new URLSearchParams(window.location.search);
             clientId = urlParams.get('client') || '';
             
@@ -360,7 +518,6 @@
                 return;
             }
 
-            // Extract client name from ID (convert john-smith to John Smith)
             clientName = clientId.split('-').map(word => 
                 word.charAt(0).toUpperCase() + word.slice(1)
             ).join(' ');
@@ -374,7 +531,7 @@
         function showSetupMessage() {
             document.getElementById('setupMessage').innerHTML = `
                 <div class="setup-required">
-                    <h3>⚠️ Setup Required</h3>
+                    <h3>Setup Required</h3>
                     <p>This tracker needs to be accessed with a unique client link.</p>
                     <p>Your wellness coach will provide you with a personalized link like:</p>
                     <p><code>habit-tracker.html?client=your-name</code></p>
@@ -427,16 +584,14 @@
                     })
                 });
 
-                showSyncStatus('Synced to coach', false);
+                showSyncStatus('Synced', false);
             } catch (error) {
                 console.error('Sync error:', error);
-                showSyncStatus('Sync failed - data saved locally', true);
+                showSyncStatus('Sync failed', true);
             }
         }
 
         async function loadDataFromServer() {
-            // For now, we'll use local storage
-            // If server sync is configured, this would fetch initial data
             renderHabits();
             renderStats();
         }
@@ -448,7 +603,7 @@
             
             setTimeout(() => {
                 status.classList.remove('show');
-            }, 3000);
+            }, 2000);
         }
 
         // ===== DATE FUNCTIONS =====
@@ -467,20 +622,19 @@
             tomorrow.setDate(tomorrow.getDate() + 1);
             
             if (date.getTime() === today.getTime()) {
-                return 'Today - ' + date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+                return 'Today · ' + date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
             } else if (date.getTime() === yesterday.getTime()) {
-                return 'Yesterday - ' + date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+                return 'Yesterday · ' + date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
             } else if (date.getTime() === tomorrow.getTime()) {
-                return 'Tomorrow - ' + date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+                return 'Tomorrow · ' + date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
             } else {
-                return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+                return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
             }
         }
 
         function updateDateDisplay() {
             document.getElementById('currentDate').textContent = formatDateDisplay(currentDate);
             
-            // Disable next day button if viewing future
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const nextBtn = document.getElementById('nextDayBtn');
@@ -500,7 +654,6 @@
             const habitName = input.value.trim();
             
             if (habitName === '') {
-                alert('Please enter a habit name');
                 return;
             }
 
@@ -520,7 +673,6 @@
             habits.push(newHabit);
             saveHabits(habits);
             
-            // Sync to server
             syncToServer('addHabit', { habit: newHabit });
             
             input.value = '';
@@ -528,8 +680,10 @@
             renderStats();
         }
 
-        function deleteHabit(habitId) {
-            if (!confirm('Are you sure you want to delete this habit? All tracking data for this habit will be lost.')) {
+        function deleteHabit(habitId, event) {
+            event.stopPropagation();
+            
+            if (!confirm('Delete this habit? All tracking data will be lost.')) {
                 return;
             }
 
@@ -543,7 +697,6 @@
             });
             saveCompletions(completions);
 
-            // Sync to server
             syncToServer('deleteHabit', { habitId: habitId });
 
             renderHabits();
@@ -562,7 +715,6 @@
             completions[dateKey][habitId] = isCompleted;
             saveCompletions(completions);
             
-            // Sync to server
             const habits = getHabits();
             const habit = habits.find(h => h.id === habitId);
             
@@ -594,8 +746,8 @@
             if (habits.length === 0) {
                 habitsList.innerHTML = `
                     <div class="empty-state">
-                        <h3>No habits yet!</h3>
-                        <p>Add your first health & wellness habit below to get started.</p>
+                        <h3 class="empty-state-title">No habits yet</h3>
+                        <p>Start building your wellness routine by adding your first habit below.</p>
                     </div>
                 `;
                 return;
@@ -604,15 +756,18 @@
             habitsList.innerHTML = habits.map(habit => {
                 const isCompleted = todayCompletions[habit.id] || false;
                 return `
-                    <div class="habit-item ${isCompleted ? 'completed' : ''}">
-                        <input 
-                            type="checkbox" 
-                            class="habit-checkbox"
-                            ${isCompleted ? 'checked' : ''}
-                            onchange="toggleHabit(${habit.id})"
-                        >
+                    <div class="habit-item" onclick="toggleHabit(${habit.id})">
+                        <div class="habit-checkbox-wrapper">
+                            <input 
+                                type="checkbox" 
+                                class="habit-checkbox"
+                                ${isCompleted ? 'checked' : ''}
+                                id="habit-${habit.id}"
+                            >
+                            <label for="habit-${habit.id}" class="habit-checkmark"></label>
+                        </div>
                         <span class="habit-name">${habit.name}</span>
-                        <button class="delete-habit" onclick="deleteHabit(${habit.id})">Delete</button>
+                        <button class="delete-habit" onclick="deleteHabit(${habit.id}, event)">Delete</button>
                     </div>
                 `;
             }).join('');
@@ -668,7 +823,7 @@
                 </div>
                 <div class="stat-box">
                     <div class="stat-number">${completionRate}%</div>
-                    <div class="stat-label">Completion Rate</div>
+                    <div class="stat-label">Complete</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-number">${streak}</div>
@@ -676,7 +831,7 @@
                 </div>
                 <div class="stat-box">
                     <div class="stat-number">${totalCompletions}</div>
-                    <div class="stat-label">Last 30 Days</div>
+                    <div class="stat-label">30 Days</div>
                 </div>
             `;
 
