@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg: #fafaf9;
+            --color-surface: #ffffff;
+            --color-text-primary: #1a1a1a;
+            --color-text-secondary: #737373;
+            --color-accent: #059669;
+            --color-accent-light: #d1fae5;
+            --color-border: #e5e5e5;
+            --color-hover: #f5f5f4;
+            --font-display: 'Crimson Pro', serif;
+            --font-body: 'DM Sans', sans-serif;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--color-bg);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            background: var(--color-surface);
+            min-height: 100vh;
+        }
+
+        .header {
+            padding: 48px 40px 32px;
+            border-bottom: 1px solid var(--color-border);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-family: var(--font-display);
+            font-size: 38px;
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+            color: var(--color-text-primary);
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            font-weight: 400;
+            letter-spacing: 0.01em;
+            margin-bottom: 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: var(--color-accent);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .back-link:hover {
+            color: var(--color-text-primary);
+        }
+
+        .content {
+            padding: 32px 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 20px;
+            color: var(--color-text-primary);
+            letter-spacing: -0.01em;
+        }
+
+        .insight-card {
+            background: var(--color-hover);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .insight-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 8px;
+        }
+
+        .insight-value {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 400;
+            color: var(--color-accent);
+            margin-bottom: 4px;
+        }
+
+        .insight-description {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+        }
+
+        .habit-performance {
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .habit-performance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .habit-performance-item:last-child {
+            border-bottom: none;
+        }
+
+        .habit-performance-name {
+            font-size: 15px;
+            color: var(--color-text-primary);
+            flex: 1;
+        }
+
+        .habit-performance-stats {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .habit-stat {
+            text-align: right;
+        }
+
+        .habit-stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        .habit-stat-label {
+            font-size: 11px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--color-hover);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--color-accent);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            color: var(--color-text-secondary);
+        }
+
+        .empty-state h3 {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: var(--color-text-primary);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            animation: fadeIn 0.4s ease-out backwards;
+        }
+
+        .section:nth-child(1) { animation-delay: 0.05s; }
+        .section:nth-child(2) { animation-delay: 0.1s; }
+        .section:nth-child(3) { animation-delay: 0.15s; }
+        .section:nth-child(4) { animation-delay: 0.2s; }
+
+        @media (max-width: 640px) {
+            .header {
+                padding: 40px 24px 24px;
+            }
+
+            .header h1 {
+                font-size: 32px;
+            }
+
+            .content {
+                padding: 24px;
+            }
+
+            .habit-performance-stats {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Your Analysis</h1>
+            <p class="header-subtitle" id="clientNameDisplay"></p>
+            <a href="javascript:history.back()" class="back-link">← Back to Tracker</a>
+        </div>
+
+        <div class="content" id="analysisContent">
+            <div class="empty-state">
+                <h3>Loading analysis...</h3>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let clientId = '';
+        let clientName = '';
+
+        function init() {
+            const urlParams = new URLSearchParams(window.location.search);
+            clientId = urlParams.get('client') || '';
+            
+            if (!clientId) {
+                document.getElementById('analysisContent').innerHTML = `
+                    <div class="empty-state">
+                        <h3>No client found</h3>
+                        <p>Please access this page from your habit tracker.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            clientName = clientId.split('-').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+
+            document.getElementById('clientNameDisplay').textContent = clientName;
+            
+            generateAnalysis();
+        }
+
+        function getStorageKey(suffix) {
+            return `client_${clientId}_${suffix}`;
+        }
+
+        function getHabits() {
+            const habits = localStorage.getItem(getStorageKey('habits'));
+            return habits ? JSON.parse(habits) : [];
+        }
+
+        function getCompletions() {
+            const completions = localStorage.getItem(getStorageKey('completions'));
+            return completions ? JSON.parse(completions) : {};
+        }
+
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        function generateAnalysis() {
+            const habits = getHabits();
+            const completions = getCompletions();
+
+            if (habits.length === 0) {
+                document.getElementById('analysisContent').innerHTML = `
+                    <div class="empty-state">
+                        <h3>No habits yet</h3>
+                        <p>Start tracking habits to see your analysis.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Calculate overall stats
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            let totalDaysTracked = 0;
+            let totalCompletions = 0;
+            let allDates = Object.keys(completions);
+            
+            // Calculate longest streak
+            let longestStreak = 0;
+            let currentStreak = 0;
+            let checkDate = new Date(today);
+            checkDate.setDate(checkDate.getDate() - 1);
+            
+            // First calculate current streak
+            while (true) {
+                const dateKey = formatDate(checkDate);
+                const dayCompletions = completions[dateKey] || {};
+                const completedCount = habits.filter(h => dayCompletions[h.id]).length;
+                
+                if (completedCount === habits.length) {
+                    currentStreak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                } else {
+                    break;
+                }
+                
+                if (currentStreak > 365) break;
+            }
+            
+            longestStreak = currentStreak;
+            
+            // Check all historical dates for longest streak
+            const sortedDates = allDates.sort().reverse();
+            let tempStreak = 0;
+            let prevDate = null;
+            
+            for (const dateStr of sortedDates) {
+                const date = new Date(dateStr);
+                const dayCompletions = completions[dateStr] || {};
+                const completedCount = habits.filter(h => dayCompletions[h.id]).length;
+                
+                if (completedCount === habits.length) {
+                    if (prevDate) {
+                        const diff = Math.abs((prevDate - date) / (1000 * 60 * 60 * 24));
+                        if (diff === 1) {
+                            tempStreak++;
+                        } else {
+                            longestStreak = Math.max(longestStreak, tempStreak);
+                            tempStreak = 1;
+                        }
+                    } else {
+                        tempStreak = 1;
+                    }
+                    prevDate = date;
+                }
+            }
+            longestStreak = Math.max(longestStreak, tempStreak);
+
+            // Calculate habit-specific performance
+            const habitStats = habits.map(habit => {
+                let completedDays = 0;
+                let totalDays = 0;
+                let longestHabitStreak = 0;
+                let currentHabitStreak = 0;
+                
+                allDates.forEach(dateStr => {
+                    const dayCompletions = completions[dateStr] || {};
+                    totalDays++;
+                    if (dayCompletions[habit.id]) {
+                        completedDays++;
+                    }
+                });
+
+                // Calculate streak for this habit
+                let checkDate = new Date(today);
+                checkDate.setDate(checkDate.getDate() - 1);
+                
+                while (true) {
+                    const dateKey = formatDate(checkDate);
+                    const dayCompletions = completions[dateKey] || {};
+                    
+                    if (dayCompletions[habit.id]) {
+                        currentHabitStreak++;
+                        checkDate.setDate(checkDate.getDate() - 1);
+                    } else {
+                        break;
+                    }
+                    
+                    if (currentHabitStreak > 365) break;
+                }
+                
+                longestHabitStreak = currentHabitStreak;
+
+                const completionRate = totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0;
+                
+                return {
+                    name: habit.name,
+                    completedDays,
+                    totalDays,
+                    completionRate,
+                    longestStreak: longestHabitStreak
+                };
+            });
+
+            // Sort by completion rate
+            habitStats.sort((a, b) => b.completionRate - a.completionRate);
+
+            // Calculate overall completion rate
+            let totalPossibleCompletions = 0;
+            let actualCompletions = 0;
+            
+            allDates.forEach(dateStr => {
+                const dayCompletions = completions[dateStr] || {};
+                totalPossibleCompletions += habits.length;
+                actualCompletions += Object.values(dayCompletions).filter(v => v).length;
+            });
+
+            const overallRate = totalPossibleCompletions > 0 
+                ? Math.round((actualCompletions / totalPossibleCompletions) * 100) 
+                : 0;
+
+            // Find best and worst habits
+            const bestHabit = habitStats[0];
+            const worstHabit = habitStats[habitStats.length - 1];
+
+            // Calculate total days with data
+            const uniqueDates = new Set(allDates);
+            const daysTracked = uniqueDates.size;
+
+            // Generate HTML
+            let html = `
+                <div class="section">
+                    <h2 class="section-title">Overall Performance</h2>
+                    
+                    <div class="insight-card">
+                        <div class="insight-title">Overall Completion Rate</div>
+                        <div class="insight-value">${overallRate}%</div>
+                        <div class="insight-description">Across all habits and ${daysTracked} days of tracking</div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">Longest Perfect Streak</div>
+                        <div class="insight-value">${longestStreak} ${longestStreak === 1 ? 'day' : 'days'}</div>
+                        <div class="insight-description">Consecutive days completing all habits</div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">Current Streak</div>
+                        <div class="insight-value">${currentStreak} ${currentStreak === 1 ? 'day' : 'days'}</div>
+                        <div class="insight-description">${currentStreak > 0 ? 'Keep it going!' : 'Complete all habits today to start a new streak'}</div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">Days Tracked</div>
+                        <div class="insight-value">${daysTracked}</div>
+                        <div class="insight-description">Total days with habit data recorded</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Habit Performance</h2>
+                    ${habitStats.length > 1 ? `
+                    <div class="insight-card" style="background: ${bestHabit.completionRate >= 75 ? 'var(--color-accent-light)' : 'var(--color-hover)'};">
+                        <div class="insight-title">Your Strongest Habit</div>
+                        <div class="insight-value" style="color: var(--color-accent);">${bestHabit.name}</div>
+                        <div class="insight-description">${bestHabit.completionRate}% completion rate · ${bestHabit.longestStreak} day streak</div>
+                    </div>
+
+                    ${worstHabit.completionRate < 50 ? `
+                    <div class="insight-card" style="background: #fef2f2;">
+                        <div class="insight-title">Needs Attention</div>
+                        <div class="insight-value" style="color: #dc2626;">${worstHabit.name}</div>
+                        <div class="insight-description">${worstHabit.completionRate}% completion rate · Consider adjusting or replacing this habit</div>
+                    </div>
+                    ` : ''}
+                    ` : ''}
+
+                    <div class="habit-performance">
+                        ${habitStats.map(habit => `
+                            <div class="habit-performance-item">
+                                <div class="habit-performance-name">${habit.name}</div>
+                                <div class="habit-performance-stats">
+                                    <div class="habit-stat">
+                                        <div class="habit-stat-value">${habit.completionRate}%</div>
+                                        <div class="habit-stat-label">Success</div>
+                                    </div>
+                                    <div class="habit-stat">
+                                        <div class="habit-stat-value">${habit.completedDays}</div>
+                                        <div class="habit-stat-label">Days</div>
+                                    </div>
+                                    <div class="habit-stat">
+                                        <div class="habit-stat-value">${habit.longestStreak}</div>
+                                        <div class="habit-stat-label">Streak</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Insights & Tips</h2>
+                    
+                    ${overallRate >= 80 ? `
+                    <div class="insight-card" style="background: var(--color-accent-light);">
+                        <div class="insight-title">🌟 Excellent Work!</div>
+                        <div class="insight-description">You're maintaining an ${overallRate}% completion rate. This level of consistency is exceptional. Keep building on this momentum!</div>
+                    </div>
+                    ` : ''}
+
+                    ${overallRate >= 50 && overallRate < 80 ? `
+                    <div class="insight-card">
+                        <div class="insight-title">💪 Good Progress</div>
+                        <div class="insight-description">You're at ${overallRate}% completion. Focus on consistency to push into the 80%+ range. Small daily wins compound over time.</div>
+                    </div>
+                    ` : ''}
+
+                    ${overallRate < 50 ? `
+                    <div class="insight-card" style="background: #fffbeb;">
+                        <div class="insight-title">🎯 Room to Grow</div>
+                        <div class="insight-description">At ${overallRate}% completion, consider simplifying your habits or reducing the number. Quality over quantity - it's better to master 2-3 habits than struggle with many.</div>
+                    </div>
+                    ` : ''}
+
+                    ${longestStreak >= 7 ? `
+                    <div class="insight-card">
+                        <div class="insight-title">🔥 Streak Master</div>
+                        <div class="insight-description">Your longest streak of ${longestStreak} days shows you can maintain consistency. Use this as proof that you're capable of building lasting habits.</div>
+                    </div>
+                    ` : ''}
+
+                    ${habitStats.some(h => h.completionRate < 30) ? `
+                    <div class="insight-card">
+                        <div class="insight-title">💡 Optimization Opportunity</div>
+                        <div class="insight-description">Some habits are struggling. Consider: Are they too difficult? Wrong time of day? Not aligned with your values? Don't be afraid to adjust or replace habits that aren't working.</div>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+
+            document.getElementById('analysisContent').innerHTML = html;
+        }
+
+        init();
+    </script>
+</body>
+</html>
